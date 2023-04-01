@@ -3,7 +3,7 @@ import "./App.css";
 import { Button, Card, Input, Radio } from "antd";
 
 function App() {
-  const [unisatInstalled, setUnisatInstalled] = useState(false);
+  const [uniliteInstalled, setUniliteInstalled] = useState(false);
   const [connected, setConnected] = useState(false);
   const [accounts, setAccounts] = useState<string[]>([]);
   const [publicKey, setPublicKey] = useState("");
@@ -16,17 +16,17 @@ function App() {
   const [network, setNetwork] = useState("livenet");
 
   const getBasicInfo = async () => {
-    const unisat = (window as any).unisat;
-    const [address] = await unisat.getAccounts();
+    const unilite = (window as any).unilite;
+    const [address] = await unilite.getAccounts();
     setAddress(address);
 
-    const publicKey = await unisat.getPublicKey();
+    const publicKey = await unilite.getPublicKey();
     setPublicKey(publicKey);
 
-    const balance = await unisat.getBalance();
+    const balance = await unilite.getBalance();
     setBalance(balance);
 
-    const network = await unisat.getNetwork();
+    const network = await unilite.getNetwork();
     setNetwork(network);
   };
 
@@ -58,47 +58,47 @@ function App() {
   };
 
   useEffect(() => {
-    const unisat = (window as any).unisat;
+    const unilite = (window as any).unilite;
     if (unisat) {
-      setUnisatInstalled(true);
+      setUniliteInstalled(true);
     } else {
       return;
     }
-    unisat.getAccounts().then((accounts: string[]) => {
+    unilite.getAccounts().then((accounts: string[]) => {
       handleAccountsChanged(accounts);
     });
 
-    unisat.on("accountsChanged", handleAccountsChanged);
-    unisat.on("networkChanged", handleNetworkChanged);
+    unilite.on("accountsChanged", handleAccountsChanged);
+    unilite.on("networkChanged", handleNetworkChanged);
 
     return () => {
-      unisat.removeListener("accountsChanged", handleAccountsChanged);
-      unisat.removeListener("networkChanged", handleNetworkChanged);
+      unilite.removeListener("accountsChanged", handleAccountsChanged);
+      unilite.removeListener("networkChanged", handleNetworkChanged);
     };
   }, []);
 
-  if (!unisatInstalled) {
+  if (!uniliteInstalled) {
     return (
       <div className="App">
         <header className="App-header">
           <div>
             <Button
               onClick={() => {
-                window.location.href = "https://unisat.io";
+                window.location.href = "https://unilite.wallet";
               }}
             >
-              Install Unisat Wallet
+              Install Unilite Wallet
             </Button>
           </div>
         </header>
       </div>
     );
   }
-  const unisat = (window as any).unisat;
+  const unilite = (window as any).unilite;
   return (
     <div className="App">
       <header className="App-header">
-        <p>Unisat Wallet Demo</p>
+        <p>Unilite Wallet Demo</p>
 
         {connected ? (
           <div
@@ -159,11 +159,11 @@ function App() {
           <div>
             <Button
               onClick={async () => {
-                const result = await unisat.requestAccounts();
+                const result = await unilite.requestAccounts();
                 handleAccountsChanged(result);
               }}
             >
-              Connect Unisat Wallet
+              Connect Unilite Wallet
             </Button>
           </div>
         )}
@@ -194,7 +194,7 @@ function SignPsbtCard() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const psbtResult = await (window as any).unisat.signPsbt(psbtHex);
+            const psbtResult = await (window as any).unilite.signPsbt(psbtHex);
             setPsbtResult(psbtResult);
           } catch (e) {
             setPsbtResult((e as any).message);
@@ -228,7 +228,7 @@ function SignMessageCard() {
       <Button
         style={{ marginTop: 10 }}
         onClick={async () => {
-          const signature = await (window as any).unisat.signMessage(message);
+          const signature = await (window as any).unilite.signMessage(message);
           setSignature(signature);
         }}
       >
@@ -264,7 +264,7 @@ function PushTxCard() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const txid = await (window as any).unisat.pushTx(rawtx);
+            const txid = await (window as any).unilite.pushTx(rawtx);
             setTxid(txid);
           } catch (e) {
             setTxid((e as any).message);
@@ -299,7 +299,7 @@ function PushPsbtCard() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const txid = await (window as any).unisat.pushPsbt(psbtHex);
+            const txid = await (window as any).unilite.pushPsbt(psbtHex);
             setTxid(txid);
           } catch (e) {
             setTxid((e as any).message);
@@ -312,11 +312,11 @@ function PushPsbtCard() {
   );
 }
 
-function SendBitcoin() {
+function SendLitecoin() {
   const [toAddress, setToAddress] = useState(
     "tb1qmfla5j7cpdvmswtruldgvjvk87yrflrfsf6hh0"
   );
-  const [satoshis, setSatoshis] = useState(1000);
+  const [litoshis, setLitoshis] = useState(1000);
   const [txid, setTxid] = useState("");
   return (
     <Card size="small" title="Send Bitcoin" style={{ width: 300, margin: 10 }}>
@@ -331,11 +331,11 @@ function SendBitcoin() {
       </div>
 
       <div style={{ textAlign: "left", marginTop: 10 }}>
-        <div style={{ fontWeight: "bold" }}>Amount: (satoshis)</div>
+        <div style={{ fontWeight: "bold" }}>Amount: (litoshis)</div>
         <Input
-          defaultValue={satoshis}
+          defaultValue={litoshis}
           onChange={(e) => {
-            setSatoshis(parseInt(e.target.value));
+            setLitoshis(parseInt(e.target.value));
           }}
         ></Input>
       </div>
@@ -347,7 +347,7 @@ function SendBitcoin() {
         style={{ marginTop: 10 }}
         onClick={async () => {
           try {
-            const txid = await (window as any).unisat.sendBitcoin(
+            const txid = await (window as any).unilite.sendLitecoin(
               toAddress,
               satoshis
             );
@@ -357,7 +357,7 @@ function SendBitcoin() {
           }
         }}
       >
-        SendBitcoin
+        SendLitecoin
       </Button>
     </Card>
   );
